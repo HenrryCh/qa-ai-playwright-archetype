@@ -1,0 +1,174 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "D:\\Henrry\\Documents\\NTTDATA\\BOOTCAMP\\qa-ai-playwright-archetype\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "SCRUM-11.spec.ts"
+    ],
+    "configFile": "D:\\Henrry\\Documents\\NTTDATA\\BOOTCAMP\\qa-ai-playwright-archetype\\playwright.config.ts",
+    "rootDir": "D:/Henrry/Documents/NTTDATA/BOOTCAMP/qa-ai-playwright-archetype/tests/generated",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 2
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/Henrry/Documents/NTTDATA/BOOTCAMP/qa-ai-playwright-archetype/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "D:/Henrry/Documents/NTTDATA/BOOTCAMP/qa-ai-playwright-archetype/tests/generated",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "html",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "reports/playwright-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 4,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "SCRUM-11.spec.ts",
+      "file": "SCRUM-11.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "SCRUM-11 CA1: inicia sesión y redirige a la página principal",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2004,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "Completar el formulario con credenciales válidas",
+                      "duration": 169
+                    },
+                    {
+                      "title": "Entrar y validar el acceso a la página principal",
+                      "duration": 562
+                    }
+                  ],
+                  "startTime": "2026-08-04T03:16:38.563Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "76ac61408af15dfc0345-b80229d33a40c5fa6712",
+          "file": "SCRUM-11.spec.ts",
+          "line": 22,
+          "column": 5
+        },
+        {
+          "title": "SCRUM-11 CA2: muestra error y permanece en login con credenciales incorrectas",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 1,
+                  "status": "passed",
+                  "duration": 1916,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "Completar el formulario con credenciales inválidas",
+                      "duration": 168
+                    },
+                    {
+                      "title": "Entrar y validar el mensaje de error",
+                      "duration": 527
+                    }
+                  ],
+                  "startTime": "2026-08-04T03:16:38.569Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "76ac61408af15dfc0345-6a15ca6cd8587a4bb16c",
+          "file": "SCRUM-11.spec.ts",
+          "line": 47,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-08-04T03:16:36.565Z",
+    "duration": 4552.2390000000005,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}
