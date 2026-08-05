@@ -56,9 +56,9 @@ Solo está permitido generar archivos en las siguientes ubicaciones:
 
 tests/generated/
 
-tests/evidence/
+evidence/
 
-tests/reports/
+reports/
 
 No crees archivos temporales.
 

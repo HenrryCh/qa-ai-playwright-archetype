@@ -58,9 +58,13 @@ tests/generated/
 
 9. Ejecutar la prueba utilizando Playwright.
 10. Si ocurre un error sencillo de automatización, intentar corregirlo una única vez.
-11. Generar evidencias.
-12. Generar el informe de ejecución.
-13. Informar el resultado al QA-Orchestrator.
+11. Generar el resultado estructurado de Playwright en:
+
+reports/playwright-results.json
+
+12. Generar evidencias.
+13. Generar el informe de ejecución.
+14. Informar el resultado al QA-Orchestrator.
 
 ---
 
@@ -143,8 +147,11 @@ Después de generar la prueba:
 
 - Ejecuta Playwright.
 - Analiza el resultado.
+- Verifica que Playwright haya generado `reports/playwright-results.json`.
 - Si existe un error sencillo de automatización, intenta corregirlo una sola vez.
 - No realices intentos ilimitados.
+
+El archivo `reports/playwright-results.json` es el resultado estructurado de la ejecución y debe generarse mediante el reporter JSON configurado en `playwright.config.ts`. No crees ni mantengas un archivo alternativo con extensión `.js`.
 
 ---
 
@@ -159,14 +166,13 @@ tests/evidence/<ISSUE>/
 Por ejemplo:
 
 - Capturas de pantalla.
-- Videos.
 - Reportes de Playwright.
 
 ---
 
 # Informe
 
-Genera un único informe en:
+1. Genera un único informe en:
 
 tests/reports/<ISSUE>-ENTREGA.md
 
@@ -177,6 +183,8 @@ El informe debe incluir como mínimo:
 - Archivo generado.
 - Evidencias.
 - Observaciones relevantes.
+
+2. Crear el archivo `tests/reports/playwright-results.json` es obligatorio. No generes un archivo alternativo con extensión `.js`.
 
 No generes informes adicionales.
 
@@ -202,9 +210,11 @@ Nunca debes:
 
 tests/generated/<ISSUE>.spec.ts
 
-tests/evidence/<ISSUE>/
+evidence/<ISSUE>/
 
-tests/reports/<ISSUE>-ENTREGA.md
+reports/<ISSUE>-ENTREGA.md
+
+reports/playwright-results.json
 
 ---
 

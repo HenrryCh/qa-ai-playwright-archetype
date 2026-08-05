@@ -159,7 +159,7 @@ Nunca inventes datos.
 Una automatización exitosa debe:
 
 1. Obtener la Historia de Usuario.
-2. Mover la incidencia a "Pruebas Doing".
+2. Mover la incidencia a "Pruebas Doing" si la prueba no pasa y "Pruebas Done" si todos los casos son exitosos.
 3. Ejecutar la automatización.
 4. Generar evidencias.
 5. Generar el reporte.

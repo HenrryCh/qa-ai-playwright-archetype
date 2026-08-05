@@ -87,7 +87,7 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2004,
+                  "duration": 7028,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
@@ -95,14 +95,14 @@
                   "steps": [
                     {
                       "title": "Completar el formulario con credenciales válidas",
-                      "duration": 169
+                      "duration": 332
                     },
                     {
                       "title": "Entrar y validar el acceso a la página principal",
-                      "duration": 562
+                      "duration": 816
                     }
                   ],
-                  "startTime": "2026-08-04T03:16:38.563Z",
+                  "startTime": "2026-08-05T00:33:19.009Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -131,7 +131,7 @@
                   "workerIndex": 1,
                   "parallelIndex": 1,
                   "status": "passed",
-                  "duration": 1916,
+                  "duration": 6911,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
@@ -139,14 +139,14 @@
                   "steps": [
                     {
                       "title": "Completar el formulario con credenciales inválidas",
-                      "duration": 168
+                      "duration": 329
                     },
                     {
                       "title": "Entrar y validar el mensaje de error",
-                      "duration": 527
+                      "duration": 757
                     }
                   ],
-                  "startTime": "2026-08-04T03:16:38.569Z",
+                  "startTime": "2026-08-05T00:33:18.897Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -164,8 +164,8 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-08-04T03:16:36.565Z",
-    "duration": 4552.2390000000005,
+    "startTime": "2026-08-05T00:33:15.898Z",
+    "duration": 11201.283,
     "expected": 2,
     "skipped": 0,
     "unexpected": 0,

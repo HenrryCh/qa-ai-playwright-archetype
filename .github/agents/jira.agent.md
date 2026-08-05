@@ -68,7 +68,6 @@ Cuando la automatización finalice correctamente debes:
 1. Agregar un comentario con un resumen que incluya:
 
 - Resultado de la automatización.
-- Archivo generado.
 - Ubicación de las evidencias.
 - Ubicación del informe.
 
@@ -76,8 +75,14 @@ Cuando la automatización finalice correctamente debes:
 
 Si la automatización falla:
 
-- No cambies el estado.
-- Agrega un comentario indicando el motivo del fallo.
+1. Agregar un comentario con un resumen que incluya:
+
+- Resultado de la automatización indicando el fallo.
+- Ubicación de las evidencias.
+- Ubicación del informe.
+
+2. Cambiar el estado de la Historia de Usuario a **Pruebas Doing**.
+
 
 ---
 

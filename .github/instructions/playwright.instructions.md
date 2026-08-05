@@ -77,11 +77,11 @@ tests/generated/
 
 Las evidencias deben almacenarse en:
 
-tests/evidence/<ISSUE>/
+evidence/<ISSUE>/
 
 El informe debe almacenarse en:
 
-tests/reports/<ISSUE>-ENTREGA.md
+reports/<ISSUE>-ENTREGA.md
 
 No generes archivos fuera de estas carpetas.
 

@@ -21,19 +21,6 @@ export class JiraClient {
   }
 
   /**
-   * Verifica la conexión con Jira.
-   */
-  async testConnection() {
-    const response = await this.client.get("/myself");
-
-    return {
-      displayName: response.data.displayName,
-      email: response.data.emailAddress,
-      accountId: response.data.accountId,
-    };
-  }
-
-  /**
    * Obtiene una Historia de Usuario por su clave.
    */
   async getIssue(issueKey: string): Promise<JiraIssue> {
@@ -53,36 +40,7 @@ export class JiraClient {
   }
 
   /**
-   * Busca incidencias mediante JQL.
-   */
-  async searchIssues(jql: string): Promise<JiraIssue[]> {
-    try {
-      const response = await this.client.post("/search/jql", {
-        jql,
-        maxResults: 50,
-        fields: [
-          "summary",
-          "description",
-          "status",
-          "labels",
-        ],
-      });
-
-      return response.data.issues.map((issue: any) =>
-        this.mapIssue(issue)
-      );
-    } catch (error: any) {
-      console.error("Error Jira:");
-      console.error(error.response?.data || error.message);
-
-      throw new Error(
-        "No fue posible ejecutar la consulta JQL."
-      );
-    }
-  }
-
-  /**
-   * Obtiene todas las transiciones disponibles
+   * Obtiene las transiciones disponibles
    * para una incidencia.
    */
   async getTransitions(issueKey: string) {
@@ -104,8 +62,7 @@ export class JiraClient {
 
     const transition = transitions.find(
       (t: any) =>
-        t.name.toLowerCase() ===
-        targetStatus.toLowerCase()
+        t.name.toLowerCase() === targetStatus.toLowerCase()
     );
 
     if (!transition) {
@@ -129,17 +86,25 @@ export class JiraClient {
   }
 
   /**
-   * Agrega el resumen de la automatización a la incidencia.
+   * Agrega un comentario a la incidencia.
    */
-  async addComment(issueKey: string, comment: string): Promise<void> {
+  async addComment(
+    issueKey: string,
+    comment: string
+  ): Promise<void> {
     await this.client.post(`/issue/${issueKey}/comment`, {
       body: {
-        type: 'doc',
+        type: "doc",
         version: 1,
         content: [
           {
-            type: 'paragraph',
-            content: [{ type: 'text', text: comment }],
+            type: "paragraph",
+            content: [
+              {
+                type: "text",
+                text: comment,
+              },
+            ],
           },
         ],
       },
