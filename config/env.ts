@@ -16,7 +16,11 @@ export const env = {
   // Playwright
   baseUrl: getEnv('BASE_URL'),
   browser: getEnv('BROWSER') || 'chromium',
-  headless: getEnv('HEADLESS') === 'true',
+
+  // Por defecto Playwright se ejecuta en headless.
+  // Para ejecución visible: HEADLESS=false
+  headless: getEnv('HEADLESS') !== 'false',
+
   reportsPath: getEnv('REPORTS_PATH') || 'reports',
   evidencePath: getEnv('EVIDENCE_PATH') || 'evidence',
 
@@ -26,7 +30,7 @@ export const env = {
     email: getEnv('JIRA_EMAIL', true),
     apiToken: getEnv('JIRA_API_TOKEN', true),
 
-    // Opcionales
+    // Opcional
     projectKey: getEnv('JIRA_PROJECT_KEY'),
 
     // Estados configurables

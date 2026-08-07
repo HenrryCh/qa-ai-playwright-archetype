@@ -110,9 +110,9 @@ qa-ai-playwright-archetype/
 2. **Configurar el entorno:**
    Copia `.env.example` a `.env` y completa las credenciales:
    ```env
-   BASE_URL=https://web.theproject.ec/
-   RESERVALAB_EMAIL=student01@theproject.ec
-   RESERVALAB_PASSWORD=QaVR68_C51vp
+   BASE_URL=
+   RESERVALAB_EMAIL=
+   RESERVALAB_PASSWORD=
 
    JIRA_BASE_URL=https://tu-dominio.atlassian.net
    JIRA_EMAIL=tu-email@dominio.com

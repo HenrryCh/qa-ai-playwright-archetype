@@ -1,4 +1,7 @@
-import axios, { AxiosInstance } from "axios";
+import axios, {
+  AxiosInstance,
+} from "axios";
+
 import { env } from "../../config/env";
 import { JiraIssue } from "../types/jira.types";
 
@@ -23,15 +26,31 @@ export class JiraClient {
   /**
    * Obtiene una Historia de Usuario por su clave.
    */
-  async getIssue(issueKey: string): Promise<JiraIssue> {
+  async getIssue(
+    issueKey: string
+  ): Promise<JiraIssue> {
     try {
-      const response = await this.client.get(`/issue/${issueKey}`);
+      const response =
+        await this.client.get(
+          `/issue/${issueKey}`
+        );
 
-      return this.mapIssue(response.data);
+      return this.mapIssue(
+        response.data
+      );
     } catch (error: any) {
-      console.error("Error Jira:");
-      console.error(error.response?.status);
-      console.error(error.response?.data || error.message);
+      console.error(
+        "Error Jira:"
+      );
+
+      console.error(
+        error.response?.status
+      );
+
+      console.error(
+        error.response?.data ??
+          error.message
+      );
 
       throw new Error(
         `No fue posible obtener la incidencia ${issueKey}.`
@@ -43,12 +62,17 @@ export class JiraClient {
    * Obtiene las transiciones disponibles
    * para una incidencia.
    */
-  async getTransitions(issueKey: string) {
-    const response = await this.client.get(
-      `/issue/${issueKey}/transitions`
-    );
+  async getTransitions(
+    issueKey: string
+  ) {
+    const response =
+      await this.client.get(
+        `/issue/${issueKey}/transitions`
+      );
 
-    return response.data.transitions;
+    return (
+      response.data.transitions ?? []
+    );
   }
 
   /**
@@ -58,12 +82,17 @@ export class JiraClient {
     issueKey: string,
     targetStatus: string
   ): Promise<void> {
-    const transitions = await this.getTransitions(issueKey);
+    const transitions =
+      await this.getTransitions(
+        issueKey
+      );
 
-    const transition = transitions.find(
-      (t: any) =>
-        t.name.toLowerCase() === targetStatus.toLowerCase()
-    );
+    const transition =
+      transitions.find(
+        (t: any) =>
+          t.name?.toLowerCase() ===
+          targetStatus.toLowerCase()
+      );
 
     if (!transition) {
       throw new Error(
@@ -92,51 +121,83 @@ export class JiraClient {
     issueKey: string,
     comment: string
   ): Promise<void> {
-    await this.client.post(`/issue/${issueKey}/comment`, {
-      body: {
-        type: "doc",
-        version: 1,
-        content: [
-          {
-            type: "paragraph",
-            content: [
-              {
-                type: "text",
-                text: comment,
-              },
-            ],
-          },
-        ],
-      },
-    });
-  }
-
-  async getComments(issueKey: string) {
-    const response = await this.client.get(
-      `/issue/${issueKey}/comment`
+    await this.client.post(
+      `/issue/${issueKey}/comment`,
+      {
+        body: {
+          type: "doc",
+          version: 1,
+          content: [
+            {
+              type: "paragraph",
+              content: [
+                {
+                  type: "text",
+                  text: comment,
+                },
+              ],
+            },
+          ],
+        },
+      }
     );
-
-    return response.data.comments ?? [];
   }
 
-  async findAutomationComment(issueKey: string) {
-    const comments = await this.getComments(issueKey);
+  /**
+   * Obtiene los comentarios de una incidencia.
+   */
+  async getComments(
+    issueKey: string
+  ) {
+    const response =
+      await this.client.get(
+        `/issue/${issueKey}/comment`
+      );
 
-    const automationComment = comments.find((comment: any) =>
-      comment.body?.content?.some(
-        (block: any) =>
-          block.type === 'paragraph' &&
-          block.content?.some(
-            (item: any) =>
-              item.type === 'text' &&
-              item.text?.startsWith('🤖 Automatización QA - ')
+    return (
+      response.data.comments ?? []
+    );
+  }
+
+  /**
+   * Busca el comentario generado por
+   * esta automatización.
+   */
+  async findAutomationComment(
+    issueKey: string
+  ): Promise<string | null> {
+    const comments =
+      await this.getComments(
+        issueKey
+      );
+
+    const automationComment =
+      comments.find(
+        (comment: any) =>
+          comment.body?.content?.some(
+            (block: any) =>
+              block.type ===
+                "paragraph" &&
+              block.content?.some(
+                (item: any) =>
+                  item.type ===
+                    "text" &&
+                  item.text?.startsWith(
+                    "🤖 Automatización QA - "
+                  )
+              )
           )
-      )
-    );
+      );
 
-    return automationComment?.id ?? null;
+    return (
+      automationComment?.id ??
+      null
+    );
   }
 
+  /**
+   * Actualiza un comentario existente.
+   */
   async updateComment(
     issueKey: string,
     commentId: string,
@@ -146,14 +207,14 @@ export class JiraClient {
       `/issue/${issueKey}/comment/${commentId}`,
       {
         body: {
-          type: 'doc',
+          type: "doc",
           version: 1,
           content: [
             {
-              type: 'paragraph',
+              type: "paragraph",
               content: [
                 {
-                  type: 'text',
+                  type: "text",
                   text: comment,
                 },
               ],
@@ -168,33 +229,45 @@ export class JiraClient {
    * Convierte la respuesta de Jira
    * al modelo interno del framework.
    */
-  private mapIssue(issue: any): JiraIssue {
-    const description = this.extractPlainText(
-      issue.fields.description?.content
-    ).trim();
+  private mapIssue(
+    issue: any
+  ): JiraIssue {
+    const description =
+      this.extractPlainText(
+        issue.fields.description?.content
+      ).trim();
 
     return {
       key: issue.key,
-      summary: issue.fields.summary,
+      summary:
+        issue.fields.summary,
       description,
-      status: issue.fields.status.name,
-      labels: issue.fields.labels ?? [],
+      status:
+        issue.fields.status.name,
+      labels:
+        issue.fields.labels ?? [],
       url: `${env.jira.baseUrl}/browse/${issue.key}`,
     };
   }
 
   /**
-   * Convierte Atlassian Document Format (ADF)
+   * Convierte Atlassian Document Format
    * a texto plano.
    */
-  private extractPlainText(node: any): string {
+  private extractPlainText(
+    node: any
+  ): string {
     if (!node) {
       return "";
     }
 
     if (Array.isArray(node)) {
       return node
-        .map((item) => this.extractPlainText(item))
+        .map((item) =>
+          this.extractPlainText(
+            item
+          )
+        )
         .filter(Boolean)
         .join("\n");
     }
@@ -204,7 +277,9 @@ export class JiraClient {
     }
 
     if (node.content) {
-      return this.extractPlainText(node.content);
+      return this.extractPlainText(
+        node.content
+      );
     }
 
     return "";

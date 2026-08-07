@@ -4,9 +4,7 @@
       "C:\\Program Files\\nodejs\\node.exe",
       "D:\\Henrry\\Documents\\NTTDATA\\BOOTCAMP\\qa-ai-playwright-archetype\\node_modules\\@playwright\\test\\cli.js",
       "test",
-      "tests/generated/BOOTCAMP-2.spec.ts",
-      "--project=chromium",
-      "--headed"
+      "BOOTCAMP-2.spec.ts"
     ],
     "configFile": "D:\\Henrry\\Documents\\NTTDATA\\BOOTCAMP\\qa-ai-playwright-archetype\\playwright.config.ts",
     "rootDir": "D:/Henrry/Documents/NTTDATA/BOOTCAMP/qa-ai-playwright-archetype/tests/generated",
@@ -89,7 +87,7 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 3832,
+                  "duration": 5150,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
@@ -97,18 +95,18 @@
                   "steps": [
                     {
                       "title": "Abrir la pantalla de inicio de sesión",
-                      "duration": 1084
+                      "duration": 3523
                     },
                     {
                       "title": "Ingresar credenciales válidas y entrar",
-                      "duration": 319
+                      "duration": 160
                     },
                     {
                       "title": "Validar acceso a la página principal",
-                      "duration": 344
+                      "duration": 315
                     }
                   ],
-                  "startTime": "2026-08-07T05:02:24.841Z",
+                  "startTime": "2026-08-07T06:05:02.184Z",
                   "annotations": [],
                   "attachments": [
                     {
@@ -143,7 +141,7 @@
                   "workerIndex": 1,
                   "parallelIndex": 1,
                   "status": "passed",
-                  "duration": 4283,
+                  "duration": 4977,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
@@ -151,18 +149,18 @@
                   "steps": [
                     {
                       "title": "Abrir la pantalla de inicio de sesión",
-                      "duration": 1201
+                      "duration": 3408
                     },
                     {
                       "title": "Ingresar credenciales inválidas y entrar",
-                      "duration": 470
+                      "duration": 245
                     },
                     {
                       "title": "Validar bloqueo del acceso y mensaje de error",
-                      "duration": 288
+                      "duration": 278
                     }
                   ],
-                  "startTime": "2026-08-07T05:02:24.842Z",
+                  "startTime": "2026-08-07T06:05:02.138Z",
                   "annotations": [],
                   "attachments": [
                     {
@@ -186,8 +184,8 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-08-07T05:02:21.382Z",
-    "duration": 9842.937,
+    "startTime": "2026-08-07T06:05:00.020Z",
+    "duration": 8131.254,
     "expected": 2,
     "skipped": 0,
     "unexpected": 0,

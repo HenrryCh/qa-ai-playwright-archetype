@@ -24,28 +24,29 @@ El objetivo es automatizar Historias de Usuario de Jira mediante un flujo contro
 El flujo principal del proyecto es:
 
 Usuario
-    │
-    ▼
+│
+▼
 GitHub Copilot Agent
-    │
-    ▼
+│
+▼
 QA-Orchestrator
-    │
- ┌──┴──────────┐
- ▼             ▼
+│
+┌──┴──────────┐
+▼             ▼
 Jira-Agent   Playwright-Agent
-                  │
-                  ▼
-           Playwright MCP
-                  │
-                  ▼
-         tests/generated/
-                  │
-                  ▼
-       evidence / reports
-                  │
-                  ▼
-          Actualización Jira
+│             │
+│             ▼
+│       Playwright MCP
+│             │
+└──────┬──────┘
+       ▼
+tests/generated/
+       │
+       ▼
+evidence / reports
+       │
+       ▼
+Actualización Jira
 
 ---
 
@@ -76,7 +77,7 @@ Debe:
 - inspeccionar la estructura existente del proyecto;
 - reutilizar la funcionalidad existente;
 - delegar las operaciones de Jira al Jira-Agent;
-- delegar la automatización al Playwright-Agent;
+- delegar la inspección y automatización al Playwright-Agent;
 - consolidar los resultados;
 - informar el resultado final.
 
@@ -124,7 +125,19 @@ Debe encargarse de:
 
 La inspección mediante Playwright MCP es obligatoria antes de generar una nueva prueba.
 
-Si Playwright MCP no está disponible, el agente debe detener la automatización e informar claramente el problema.
+El servidor MCP que debe utilizarse es:
+
+playwright
+
+Las herramientas de inspección deben utilizar las herramientas disponibles bajo:
+
+playwright/browser_*
+
+Si Playwright MCP no está disponible, no responde correctamente o no puede utilizarse, el Playwright-Agent debe detener la automatización e informar claramente el problema.
+
+La ejecución de Playwright mediante `npx playwright test` no sustituye la inspección mediante Playwright MCP.
+
+Antes de generar el `.spec.ts`, el Playwright-Agent debe haber realizado y poder informar la inspección MCP realizada sobre la aplicación.
 
 ---
 
@@ -134,15 +147,21 @@ Playwright MCP es obligatorio para la inspección de la aplicación.
 
 Antes de generar una prueba:
 
-1. Abrir la aplicación.
-2. Inspeccionar la interfaz.
-3. Identificar los elementos necesarios.
-4. Verificar los selectores reales.
-5. Validar el flujo funcional.
-6. Confirmar los criterios de aceptación.
-7. Generar la prueba.
+1. Navegar a la URL de la aplicación utilizando Playwright MCP.
+2. Obtener un snapshot inicial de la interfaz.
+3. Identificar los elementos necesarios para el flujo.
+4. Interactuar con la aplicación mediante las herramientas MCP necesarias.
+5. Obtener snapshots posteriores después de las interacciones relevantes.
+6. Validar los estados necesarios para los criterios de aceptación.
+7. Confirmar los selectores reales.
+8. Informar al QA-Orchestrator qué elementos fueron encontrados y qué selectores fueron validados.
+9. Solo después de completar la inspección, generar la prueba.
 
-No se deben inventar selectores basándose únicamente en la Historia de Usuario.
+La inspección debe realizarse desde cero para la Historia de Usuario solicitada.
+
+No se debe considerar una inspección anterior como sustituto de la inspección requerida para la ejecución actual.
+
+No se deben inventar selectores basándose únicamente en la Historia de Usuario, código existente o ejecuciones anteriores.
 
 La prueba debe generarse a partir de:
 
@@ -151,6 +170,12 @@ La prueba debe generarse a partir de:
 - datos de prueba disponibles;
 - componentes existentes;
 - inspección realizada mediante Playwright MCP.
+
+La evidencia de inspección debe corresponder a la ejecución actual.
+
+La ejecución de una prueba Playwright existente no demuestra que se haya utilizado Playwright MCP.
+
+La generación de un `.spec.ts` tampoco demuestra que se haya utilizado Playwright MCP.
 
 ---
 
@@ -181,13 +206,15 @@ Antes de generar código nuevo se debe verificar si existen:
 
 Debe priorizarse siempre la reutilización.
 
+No se deben modificar archivos compartidos del arquetipo para adaptar una única Historia de Usuario o una única aplicación, salvo que el cambio haya sido solicitado explícitamente como una corrección del propio arquetipo.
+
 ---
 
 # Ejecución
 
 Después de generar la prueba:
 
-1. Ejecutar Playwright.
+1. Ejecutar la prueba generada mediante el flujo existente del proyecto.
 2. Analizar el resultado.
 3. Generar el resultado estructurado.
 4. Generar evidencias.
@@ -227,6 +254,8 @@ Las evidencias pueden incluir:
 - capturas de pantalla;
 - información relevante de ejecución;
 - artefactos generados por Playwright.
+
+Las evidencias deben corresponder a la ejecución actual.
 
 ---
 
@@ -271,14 +300,18 @@ El flujo esperado es:
 
 1. Obtener la Historia de Usuario.
 2. Moverla a "Pruebas Doing".
-3. Ejecutar la automatización.
-4. Generar evidencias.
-5. Generar el reporte.
-6. Agregar un comentario con el resultado.
-7. Si todas las pruebas son exitosas, mover a "Pruebas Done".
-8. Si existen pruebas fallidas, mantener la Historia en "Pruebas Doing".
+3. Realizar la inspección de la aplicación mediante Playwright MCP.
+4. Generar la prueba.
+5. Ejecutar la automatización.
+6. Generar evidencias.
+7. Generar el reporte.
+8. Agregar o actualizar el comentario de automatización en Jira.
+9. Si todas las pruebas son exitosas, mover a "Pruebas Done".
+10. Si existen pruebas fallidas, mantener la Historia en "Pruebas Doing".
 
 Los nombres de los estados deben obtenerse de la configuración del proyecto.
+
+El comentario de automatización no debe duplicarse si ya existe un comentario correspondiente a la ejecución de automatización. Cuando corresponda, debe actualizarse el comentario existente utilizando la funcionalidad disponible en `JiraClient`.
 
 ---
 
@@ -287,6 +320,16 @@ Los nombres de los estados deben obtenerse de la configuración del proyecto.
 Las variables de entorno deben gestionarse mediante:
 
 config/env.ts
+
+La configuración utilizada por Playwright debe mantenerse alineada con `config/env.ts` y `playwright.config.ts`.
+
+No se deben crear configuraciones paralelas o contradictorias para:
+
+- URL base;
+- navegador;
+- modo headless;
+- rutas de evidencias;
+- rutas de reportes.
 
 No se deben hardcodear:
 
@@ -342,6 +385,10 @@ Por ejemplo:
 
 Nunca inventar información.
 
+Las credenciales nunca deben escribirse directamente en el código fuente ni en los archivos `.spec.ts`.
+
+Cuando el proyecto utilice variables de entorno para datos sensibles, se deben utilizar mediante la configuración existente del arquetipo.
+
 ---
 
 # Archivos generados
@@ -366,15 +413,18 @@ Una automatización se considera exitosa cuando:
 
 - la Historia de Usuario fue obtenida correctamente;
 - la aplicación fue inspeccionada mediante Playwright MCP;
-- los selectores fueron validados mediante la inspección;
+- la inspección corresponde a la ejecución actual;
+- los elementos y selectores fueron validados mediante la inspección;
 - la prueba fue generada correctamente;
 - la prueba fue ejecutada;
 - se generaron las evidencias;
 - se generó el reporte;
-- se agregó el resultado a Jira;
+- se agregó o actualizó el resultado en Jira;
 - el estado de Jira fue actualizado correctamente.
 
 La ejecución de Playwright por sí sola no demuestra que Playwright MCP haya sido utilizado.
+
+La existencia de un `.spec.ts` funcional tampoco demuestra que la inspección MCP se haya realizado.
 
 ---
 
@@ -385,13 +435,15 @@ Nunca:
 - inventar selectores;
 - inventar datos;
 - hardcodear credenciales;
-- omitir Playwright MCP cuando esté disponible;
+- omitir Playwright MCP;
 - generar una prueba sin inspeccionar primero la aplicación;
+- considerar una inspección de una ejecución anterior como sustituto de la inspección actual;
 - crear scripts temporales;
 - duplicar funcionalidades;
 - crear clientes alternativos de Jira;
 - modificar archivos fuera del alcance solicitado;
-- generar artefactos innecesarios.
+- generar artefactos innecesarios;
+- modificar la configuración compartida del arquetipo únicamente para adaptar una aplicación concreta.
 
 Siempre reutilizar la arquitectura existente.
 
@@ -403,6 +455,9 @@ Al finalizar la automatización, el QA-Orchestrator debe informar:
 
 - Historia procesada;
 - agentes utilizados;
+- confirmación de que Playwright MCP fue utilizado;
+- resumen de la inspección realizada;
+- elementos/selectores relevantes encontrados;
 - resultado de las pruebas;
 - pruebas aprobadas;
 - pruebas fallidas;

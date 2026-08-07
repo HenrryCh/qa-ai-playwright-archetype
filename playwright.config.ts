@@ -1,10 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
-import dotenv from 'dotenv';
-import path from 'path';
-
-dotenv.config({
-  path: path.resolve(process.cwd(), '.env'),
-});
+import { env } from './config/env';
 
 export default defineConfig({
   testDir: './tests/generated',
@@ -23,16 +18,21 @@ export default defineConfig({
   ],
 
   use: {
-    baseURL: process.env.BASE_URL,
-    headless: process.env.HEADLESS !== 'false',
+    baseURL: env.baseUrl,
+
+    headless: env.headless,
+
     trace: 'on-first-retry',
+
     screenshot: 'on',
+
     video: 'retain-on-failure',
   },
 
   projects: [
     {
       name: 'chromium',
+
       use: {
         ...devices['Desktop Chrome'],
       },

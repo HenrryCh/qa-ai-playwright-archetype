@@ -23,17 +23,17 @@
 
 ## 📁 Evidencias
 
-- **Directorio:** `evidence/BOOTCAMP-2/`
+- **Directorio:** `evidence\BOOTCAMP-2/`
 
 ## 📄 Artefactos
 
 - **Prueba automatizada:** `tests/generated/BOOTCAMP-2.spec.ts`
 - **Reporte:** `reports\BOOTCAMP-2-ENTREGA.md`
-- **Evidencias:** `evidence/BOOTCAMP-2/`
+- **Evidencias:** `evidence\BOOTCAMP-2/`
 
 ## 🕐 Ejecución
 
-- **Fecha:** 2026-08-07T04:51:13.547Z
+- **Fecha:** 2026-08-07T06:05:08.315Z
 - **Modo:** Headless
 
 ---

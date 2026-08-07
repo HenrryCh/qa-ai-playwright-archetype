@@ -1,20 +1,27 @@
 {
   "name": "qa-ai-playwright-archetype",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {},
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "description": "Arquetipo de automatización QA basado en GitHub Copilot Agent, Playwright MCP y Jira Cloud",
+  "private": true,
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "check-env": "ts-node scripts/check-env.ts",
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "report": "playwright show-report",
+    "automation": "ts-node scripts/run-automation.ts"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "dependencies": {
+    "axios": "^1.19.0",
+    "dotenv": "^17.4.2"
+  },
   "devDependencies": {
     "@playwright/test": "^1.62.1",
     "@types/node": "^26.1.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.2"
-  },
-  "dependencies": {
-    "axios": "^1.19.0",
-    "dotenv": "^17.4.2"
   }
 }

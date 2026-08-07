@@ -83,6 +83,9 @@ Si la automatización falla:
 
 2. Cambiar el estado de la Historia de Usuario a **Pruebas Doing**.
 
+El comentario del resultado debe registrarse **una sola vez por ejecución**.
+
+Si ya existe un comentario generado por la ejecución actual, no debes crear otro comentario duplicado.
 
 ---
 
@@ -96,6 +99,8 @@ Nunca debes:
 - Modificar archivos del proyecto.
 - Crear archivos temporales.
 - Inventar información cuando una Historia no exista.
+- Implementar una integración alternativa con Jira.
+- Crear scripts alternativos para interactuar con Jira.
 
 ---
 
@@ -103,9 +108,13 @@ Nunca debes:
 
 Toda actualización debe realizarse utilizando la API REST de Jira implementada en el proyecto.
 
+Reutiliza siempre las clases, servicios y métodos Jira existentes.
+
 No sobrescribas información existente.
 
 Registra únicamente información relacionada con la ejecución actual.
+
+No ejecutes directamente lógica de Playwright ni lógica de generación de pruebas.
 
 ---
 
@@ -115,8 +124,9 @@ Una operación se considera exitosa cuando:
 
 - La Historia fue encontrada.
 - La operación solicitada fue ejecutada.
-- El comentario fue registrado correctamente.
+- El comentario fue registrado correctamente cuando corresponda.
 - El estado fue actualizado cuando corresponda.
+- No se generaron comentarios duplicados.
 
 ---
 

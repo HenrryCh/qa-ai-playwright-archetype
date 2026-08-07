@@ -49,11 +49,17 @@ Siempre sigue este orden:
 4. Reutilizar la funcionalidad existente.
 5. Mover la Historia de Usuario a "Pruebas Doing" en Jira (delegando al Jira-Agent).
 6. Generar el código de prueba automatizado `.spec.ts` en `tests/generated/` (delegando al Playwright-Agent). Verificar que el archivo exista en disco antes de continuar.
-7. Ejecutar el flujo de automatización completo ejecutando el script `scripts/run-automation.ts <ISSUE>` **una única vez**. Este script coordinará:
-   - La ejecución de las pruebas mediante Playwright, la generación de evidencias en `evidence/<ISSUE>/` y el informe de entrega en `reports/<ISSUE>-ENTREGA.md` (delegado al Playwright-Agent).
-   - La inspección previa y visible de la aplicación mediante el MCP de Playwright: abrir el navegador, navegar a la app, inspeccionar los elementos reales y validar el flujo con la UI en vivo antes de generar o ejecutar la prueba.
-   - El registro del comentario en Jira con los resultados de la automatización (delegado al Jira-Agent). El comentario debe publicarse una sola vez; si la automatización se vuelve a ejecutar, se debe actualizar ese mismo comentario en lugar de crear uno nuevo.
-   - La actualización del estado de la Historia de Usuario a "Pruebas Done" si es exitoso, o mantener en "Pruebas Doing" si falla (delegado al Jira-Agent).
+7. Ejecutar el flujo de automatización existente mediante `scripts/run-automation.ts <ISSUE>` **una única vez**, después de que Playwright-Agent haya completado la inspección MCP y generado el archivo `.spec.ts`.
+
+   Este script reutiliza la funcionalidad existente del proyecto para:
+
+   - Ejecutar las pruebas mediante Playwright.
+   - Generar las evidencias en `evidence/<ISSUE>/`.
+   - Generar el informe de entrega en `reports/<ISSUE>-ENTREGA.md`.
+   - Registrar el resultado de la automatización y realizar las actualizaciones correspondientes en Jira mediante la funcionalidad existente.
+
+   La inspección de la aplicación mediante Playwright MCP **no corresponde a `run-automation.ts`**. Esta responsabilidad pertenece exclusivamente a Playwright-Agent y debe completarse antes de ejecutar este script.
+
 8. Consolidar el resultado final.
 9. Informar el estado final al usuario.
 
