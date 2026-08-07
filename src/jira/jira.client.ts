@@ -111,6 +111,59 @@ export class JiraClient {
     });
   }
 
+  async getComments(issueKey: string) {
+    const response = await this.client.get(
+      `/issue/${issueKey}/comment`
+    );
+
+    return response.data.comments ?? [];
+  }
+
+  async findAutomationComment(issueKey: string) {
+    const comments = await this.getComments(issueKey);
+
+    const automationComment = comments.find((comment: any) =>
+      comment.body?.content?.some(
+        (block: any) =>
+          block.type === 'paragraph' &&
+          block.content?.some(
+            (item: any) =>
+              item.type === 'text' &&
+              item.text?.startsWith('🤖 Automatización QA - ')
+          )
+      )
+    );
+
+    return automationComment?.id ?? null;
+  }
+
+  async updateComment(
+    issueKey: string,
+    commentId: string,
+    comment: string
+  ): Promise<void> {
+    await this.client.put(
+      `/issue/${issueKey}/comment/${commentId}`,
+      {
+        body: {
+          type: 'doc',
+          version: 1,
+          content: [
+            {
+              type: 'paragraph',
+              content: [
+                {
+                  type: 'text',
+                  text: comment,
+                },
+              ],
+            },
+          ],
+        },
+      }
+    );
+  }
+
   /**
    * Convierte la respuesta de Jira
    * al modelo interno del framework.

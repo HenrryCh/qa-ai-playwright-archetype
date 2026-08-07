@@ -3,6 +3,8 @@ import { PromptBuilder } from "../src/ai/prompt.builder";
 import { PlaywrightRunner } from "../src/playwright/playwright.runner";
 import { ReportService } from "../src/report/report.service";
 import { env } from "../config/env";
+import { existsSync } from "fs";
+import { join } from "path";
 
 async function main() {
   const issueKey = process.argv[2];
@@ -26,14 +28,20 @@ async function main() {
     url: issue.url,
   });
 
-  console.log(`\nMoviendo a ${env.jira.statusTestDoing}...\n`);
+  if (issue.status !== env.jira.statusTestDoing) {
+    console.log(`\nMoviendo a ${env.jira.statusTestDoing}...\n`);
 
-  await jira.moveIssueToStatus(
-    issue.key,
-    env.jira.statusTestDoing
-  );
+    await jira.moveIssueToStatus(
+      issue.key,
+      env.jira.statusTestDoing
+    );
 
-  console.log("✅ Historia movida correctamente.");
+    console.log("✅ Historia movida correctamente.");
+  } else {
+    console.log(
+      `\nLa historia ya se encuentra en ${env.jira.statusTestDoing}. No se mueve.`
+    );
+  }
 
   const prompt = new PromptBuilder().build(issue);
 
@@ -42,7 +50,23 @@ async function main() {
   console.log("==========================================\n");
   console.log(prompt);
 
+  const specFile = join("tests", "generated", `${issue.key}.spec.ts`);
+
+  if (!existsSync(specFile)) {
+    throw new Error(
+      `El archivo de prueba no existe: ${specFile}\n` +
+      `Genera primero el spec con el Playwright-Agent antes de ejecutar run-automation.`
+    );
+  }
+
   const runner = new PlaywrightRunner();
+
+  const specValidation = await runner.validateSpec(specFile);
+  if (!specValidation.isValid) {
+    throw new Error(
+      `El spec generado no es válido: ${specValidation.error}`
+    );
+  }
 
   console.log("\nEjecutando Playwright...\n");
 
@@ -107,10 +131,30 @@ async function main() {
     `Evidencias: ${evidencePath}/`,
   ].join("\n");
 
-  await jira.addComment(
-    issue.key,
-    jiraComment
+  const existingCommentId = await jira.findAutomationComment(
+    issue.key
   );
+
+  if (existingCommentId) {
+    await jira.updateComment(
+      issue.key,
+      existingCommentId,
+      jiraComment
+    );
+    console.log("✅ Comentario de automatización actualizado.");
+  } else {
+    await jira.addComment(issue.key, jiraComment);
+    console.log("✅ Comentario de automatización publicado.");
+  }
+
+  const total = testResult.passed + testResult.failed;
+
+  if (total === 0) {
+    throw new Error(
+      "Playwright no ejecutó ninguna prueba. " +
+      "Verifica que el spec contenga tests válidos y que el archivo esté correctamente generado."
+    );
+  }
 
   if (testResult.failed > 0) {
     console.log(
@@ -120,16 +164,26 @@ async function main() {
     return;
   }
 
+  const issueAfterTests = await jira.getIssue(issue.key);
+
   console.log(
-    `\nMoviendo a ${env.jira.statusTestDone}...\n`
+    `Estado actual en Jira después de ejecutar pruebas: ${issueAfterTests.status}`
   );
 
-  await jira.moveIssueToStatus(
-    issue.key,
-    env.jira.statusTestDone
-  );
+  if (issueAfterTests.status !== env.jira.statusTestDone) {
+    console.log(`\nMoviendo a ${env.jira.statusTestDone}...\n`);
 
-  console.log("✅ Automatización finalizada.");
+    await jira.moveIssueToStatus(
+      issue.key,
+      env.jira.statusTestDone
+    );
+
+    console.log("✅ Automatización finalizada.");
+  } else {
+    console.log(
+      `\nLa historia ya se encuentra en ${env.jira.statusTestDone}. No se mueve.`
+    );
+  }
 }
 
 main().catch((error: unknown) => {

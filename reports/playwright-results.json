@@ -4,7 +4,9 @@
       "C:\\Program Files\\nodejs\\node.exe",
       "D:\\Henrry\\Documents\\NTTDATA\\BOOTCAMP\\qa-ai-playwright-archetype\\node_modules\\@playwright\\test\\cli.js",
       "test",
-      "SCRUM-11.spec.ts"
+      "tests/generated/BOOTCAMP-2.spec.ts",
+      "--project=chromium",
+      "--headed"
     ],
     "configFile": "D:\\Henrry\\Documents\\NTTDATA\\BOOTCAMP\\qa-ai-playwright-archetype\\playwright.config.ts",
     "rootDir": "D:/Henrry/Documents/NTTDATA/BOOTCAMP/qa-ai-playwright-archetype/tests/generated",
@@ -66,13 +68,13 @@
   },
   "suites": [
     {
-      "title": "SCRUM-11.spec.ts",
-      "file": "SCRUM-11.spec.ts",
+      "title": "BOOTCAMP-2.spec.ts",
+      "file": "BOOTCAMP-2.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [
         {
-          "title": "SCRUM-11 CA1: inicia sesión y redirige a la página principal",
+          "title": "BOOTCAMP-2: Inicio de sesión exitoso con credenciales válidas",
           "ok": true,
           "tags": [],
           "tests": [
@@ -87,36 +89,46 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 7028,
+                  "duration": 3832,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
                   "steps": [
                     {
-                      "title": "Completar el formulario con credenciales válidas",
-                      "duration": 332
+                      "title": "Abrir la pantalla de inicio de sesión",
+                      "duration": 1084
                     },
                     {
-                      "title": "Entrar y validar el acceso a la página principal",
-                      "duration": 816
+                      "title": "Ingresar credenciales válidas y entrar",
+                      "duration": 319
+                    },
+                    {
+                      "title": "Validar acceso a la página principal",
+                      "duration": 344
                     }
                   ],
-                  "startTime": "2026-08-05T00:33:19.009Z",
+                  "startTime": "2026-08-07T05:02:24.841Z",
                   "annotations": [],
-                  "attachments": []
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "D:\\Henrry\\Documents\\NTTDATA\\BOOTCAMP\\qa-ai-playwright-archetype\\test-results\\BOOTCAMP-2-BOOTCAMP-2-Inic-1b46c-so-con-credenciales-válidas-chromium\\test-finished-1.png"
+                    }
+                  ]
                 }
               ],
               "status": "expected"
             }
           ],
-          "id": "76ac61408af15dfc0345-b80229d33a40c5fa6712",
-          "file": "SCRUM-11.spec.ts",
-          "line": 22,
+          "id": "f8e248a56a3da17e006a-f84461d71c9d5ea9c5d2",
+          "file": "BOOTCAMP-2.spec.ts",
+          "line": 23,
           "column": 5
         },
         {
-          "title": "SCRUM-11 CA2: muestra error y permanece en login con credenciales incorrectas",
+          "title": "BOOTCAMP-2: Inicio de sesión con credenciales inválidas muestra error",
           "ok": true,
           "tags": [],
           "tests": [
@@ -131,32 +143,42 @@
                   "workerIndex": 1,
                   "parallelIndex": 1,
                   "status": "passed",
-                  "duration": 6911,
+                  "duration": 4283,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
                   "steps": [
                     {
-                      "title": "Completar el formulario con credenciales inválidas",
-                      "duration": 329
+                      "title": "Abrir la pantalla de inicio de sesión",
+                      "duration": 1201
                     },
                     {
-                      "title": "Entrar y validar el mensaje de error",
-                      "duration": 757
+                      "title": "Ingresar credenciales inválidas y entrar",
+                      "duration": 470
+                    },
+                    {
+                      "title": "Validar bloqueo del acceso y mensaje de error",
+                      "duration": 288
                     }
                   ],
-                  "startTime": "2026-08-05T00:33:18.897Z",
+                  "startTime": "2026-08-07T05:02:24.842Z",
                   "annotations": [],
-                  "attachments": []
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "D:\\Henrry\\Documents\\NTTDATA\\BOOTCAMP\\qa-ai-playwright-archetype\\test-results\\BOOTCAMP-2-BOOTCAMP-2-Inic-c5246-les-inválidas-muestra-error-chromium\\test-finished-1.png"
+                    }
+                  ]
                 }
               ],
               "status": "expected"
             }
           ],
-          "id": "76ac61408af15dfc0345-6a15ca6cd8587a4bb16c",
-          "file": "SCRUM-11.spec.ts",
-          "line": 47,
+          "id": "f8e248a56a3da17e006a-479eb5919329d63b53a1",
+          "file": "BOOTCAMP-2.spec.ts",
+          "line": 40,
           "column": 5
         }
       ]
@@ -164,8 +186,8 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-08-05T00:33:15.898Z",
-    "duration": 11201.283,
+    "startTime": "2026-08-07T05:02:21.382Z",
+    "duration": 9842.937,
     "expected": 2,
     "skipped": 0,
     "unexpected": 0,

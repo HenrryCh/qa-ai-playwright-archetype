@@ -1,270 +1,172 @@
 # QA AI Playwright Archetype
 
-Arquetipo de automatización QA basado en **GitHub Copilot Agent**, **Playwright MCP** y **Jira Cloud**, capaz de generar y ejecutar pruebas End-to-End automáticamente a partir de una Historia de Usuario.
+Arquetipo de automatización QA impulsado por **GitHub Copilot Agent**, **Playwright MCP** y **Jira Cloud**. Permite automatizar de forma autónoma Historias de Usuario mediante inspección visual de la aplicación, generación de pruebas E2E en TypeScript, ejecución, captura de evidencias, reportes y actualización del flujo de trabajo en Jira.
 
 ---
 
-# Características
+## 🚀 Características Principales
 
-- Automatización End-to-End con Playwright.
-- Inspección automática mediante Playwright MCP.
-- Integración con Jira Cloud.
-- Generación automática de pruebas.
-- Ejecución automática.
-- Generación de evidencias y reportes.
-- Actualización automática del flujo de trabajo en Jira.
+- 🤖 **Orquestación basada en Agentes**: Coordinación entre agentes especializados (`QA-Orchestrator`, `Jira-Agent`, `Playwright-Agent`).
+- 🔍 **Inspección Real con Playwright MCP**: Captura selectores y valida la interfaz antes de escribir cualquier código de prueba.
+- 🔄 **Integración Bidireccional con Jira Cloud**: Transiciona automáticamente estados (*Desarrollo Done* → *Pruebas Doing* → *Pruebas Done*) y registra comentarios formateados con métricas.
+- 📊 **Generación Autónoma de Artefactos**: Produce specs independientes en TypeScript (`tests/generated/`), capturas de evidencia (`evidence/`) y reportes consolidados en Markdown (`reports/`).
+- 🛠️ **Ejecución Flexible**: Soporta ejecución guiada desde Copilot Chat (Agent Mode) o técnica mediante CLI.
 
 ---
 
-# Tecnologías
+## 🛠️ Tecnologías y Requisitos
 
-- TypeScript
-- Node.js
-- Playwright
-- Playwright MCP
-- Jira Cloud REST API
-- GitHub Copilot Agent
-
----
-
-# Requisitos
-
-Instalar previamente:
-
-- Node.js 22+
-- Git
-- Visual Studio Code
-- GitHub Copilot
-- Playwright
-- Playwright MCP
-- Cuenta de Jira Cloud
+- **Node.js**: `>=22.0.0`
+- **Lenguaje**: TypeScript (`^5.x`)
+- **Testing**: Playwright (`^1.x`)
+- **Protocolo AI**: Playwright MCP
+- **Integración**: Jira Cloud REST API (v3)
 
 ---
 
-# Instalación
-
-Clonar el repositorio:
-
-```bash
-git clone <URL_DEL_REPOSITORIO>
-
-cd qa-ai-playwright-archetype
-```
-
-Instalar dependencias:
-
-```bash
-npm install
-```
-
-Instalar Playwright:
-
-```bash
-npx playwright install
-```
-
-Crear el archivo `.env` utilizando el archivo `.env.example`.
-
----
-
-# Configuración
-
-Completar las variables de entorno:
+## 🏗️ Arquitectura y Agentes
 
 ```text
-JIRA_BASE_URL=
-JIRA_EMAIL=
-JIRA_API_TOKEN=
+               ┌──────────────────────────────┐
+               │    GitHub Copilot Agent      │
+               └──────────────┬───────────────┘
+                              │ "Automatiza la HU SCRUM-11"
+                              ▼
+                   ┌─────────────────────┐
+                   │   QA-Orchestrator   │
+                   └──────────┬──────────┘
+                              │
+          ┌───────────────────┴───────────────────┐
+          ▼                                       ▼
+  ┌───────────────┐                       ┌───────────────┐
+  │  Jira-Agent   │                       │Playwright-Ag. │
+  └───────┬───────┘                       └───────┬───────┘
+          │ (Obtener HU / Mover Doing)            │ (Inspección MCP)
+          ▼                                       ▼
+  Jira Cloud REST                         web.theproject.ec
+          │                                       │
+          │                                       ▼
+          │                            tests/generated/*.spec.ts
+          │                                       │
+          └───────────────────┬───────────────────┘
+                              ▼
+                  npx ts-node run-automation.ts
+                              │
+           ┌──────────────────┼──────────────────┐
+           ▼                  ▼                  ▼
+       evidence/           reports/          Jira Comment
+    (Screenshots)        (*-ENTREGA.md)    & Status Transition
+                                         (Done / Doing if fail)
+```
 
-STATUS_TEST_DOING=
-STATUS_TEST_DONE=
+### Roles de los Agentes
+
+| Agente | Responsabilidad |
+|---|---|
+| **`QA-Orchestrator`** | Coordina el flujo completo, evalúa la disponibilidad de MCP y asegura el cumplimiento del proceso. |
+| **`Jira-Agent`** | Consulta información de la HU, realiza las transiciones de estado (*Doing* / *Done*) y publica comentarios. |
+| **`Playwright-Agent`** | Inspecciona la app mediante Playwright MCP, genera la prueba TypeScript y ejecuta validaciones locales. |
+
+---
+
+## 📁 Estructura del Proyecto
+
+```text
+qa-ai-playwright-archetype/
+├── .github/
+│   ├── agents/            # Prompts/Definiciones de Agentes (orchestrator, jira, playwright)
+│   ├── instructions/      # Instrucciones de codificación y Playwright para la IA
+│   └── copilot-instructions.md
+├── config/                # Carga y validación de variables de entorno (env.ts)
+├── src/
+│   ├── ai/                # PromptBuilder para generar las instrucciones de prueba
+│   ├── jira/              # JiraClient (REST API v3 para transiciones y comentarios)
+│   ├── playwright/        # PlaywrightRunner (ejecución y parsing de resultados JSON)
+│   ├── report/            # ReportService (generación de informes en Markdown)
+│   └── types/             # Definiciones TypeScript (JiraIssue, etc.)
+├── scripts/
+│   ├── check-env.ts       # Validador de variables de entorno
+│   └── run-automation.ts  # Orquestador técnico principal de la ejecución
+├── tests/
+│   └── generated/         # Especificaciones de prueba generadas (.spec.ts)
+├── evidence/              # Evidencias fotográficas por HU (evidence/<ISSUE>/)
+├── reports/               # Reportes de entrega en Markdown (reports/<ISSUE>-ENTREGA.md)
+├── playwright.config.ts   # Configuración de Playwright (reporters, baseURL, etc.)
+└── .env.example           # Plantilla de configuración de entorno
 ```
 
 ---
 
-# Arquitectura
+## ⚙️ Instalación y Configuración
 
-```
-Usuario
-    │
-    ▼
-GitHub Copilot Agent
-    │
-    ▼
-QA-Orchestrator
-    │
- ┌──┴──────────┐
- ▼             ▼
-Jira-Agent   Playwright-Agent
-                  │
-                  ▼
-           Playwright MCP
-                  │
-                  ▼
-         tests/generated
-                  │
-                  ▼
-       evidence / reports
-                  │
-                  ▼
-          Actualización Jira
-```
+1. **Clonar e instalar dependencias:**
+   ```bash
+   git clone <URL_REPOSITORIO>
+   cd qa-ai-playwright-archetype
+   npm install
+   npx playwright install
+   ```
 
----
+2. **Configurar el entorno:**
+   Copia `.env.example` a `.env` y completa las credenciales:
+   ```env
+   BASE_URL=https://web.theproject.ec/
+   RESERVALAB_EMAIL=student01@theproject.ec
+   RESERVALAB_PASSWORD=QaVR68_C51vp
 
-# Estructura del proyecto
+   JIRA_BASE_URL=https://tu-dominio.atlassian.net
+   JIRA_EMAIL=tu-email@dominio.com
+   JIRA_API_TOKEN=tu-api-token
+   JIRA_PROJECT_KEY=SCRUM
+   JIRA_STATUS_TEST_DOING=Pruebas Doing
+   JIRA_STATUS_TEST_DONE=Pruebas Done
+   ```
 
-```
-.github/
-    agents/
-    instructions/
-    copilot-instructions.md
-
-scripts/
-
-src/
-    ai/
-    config/
-    core/
-    jira/
-    playwright/
-    types/
-
-tests/
-    generated/
-
-evidence/
-
-reports/
-```
+3. **Validar configuración:**
+   ```bash
+   npx ts-node scripts/check-env.ts
+   ```
 
 ---
 
-# Archivos principales
+## 💻 Modo de Uso
 
-| Archivo | Responsabilidad |
-|----------|-----------------|
-| run-automation.ts | Flujo principal de automatización |
-| jira.client.ts | Comunicación con Jira |
-| prompt.builder.ts | Construcción del prompt enviado al agente |
-| playwright.generator.ts | Generación de pruebas |
-| playwright.runner.ts | Ejecución de Playwright |
-| file-manager.ts | Escritura de archivos |
+### Opción 1: Desde GitHub Copilot (Recomendado)
+Abre GitHub Copilot Chat en **Agent Mode** e invoca la automatización:
 
----
-
-# Flujo de automatización
-
-1. Obtener la Historia de Usuario.
-2. Validar la información disponible.
-3. Si falta información (URL, usuario, contraseña o datos de prueba), solicitarla al usuario.
-4. Inspeccionar la aplicación utilizando Playwright MCP.
-5. Generar la prueba.
-6. Ejecutar Playwright.
-7. Generar evidencias.
-8. Generar el reporte.
-9. Agregar un comentario en Jira.
-10. Mover la Historia de Usuario a **Pruebas Done**.
-
----
-
-# Uso
-
-Abrir GitHub Copilot en **modo Agent**.
-
-Escribir:
-
-```
-Automatiza la HU SCRUM-15
+```text
+Automatiza la HU SCRUM-11
 ```
 
-El agente ejecutará automáticamente el flujo completo.
+El flujo ejecutará automáticamente:
+1. Transición de la HU en Jira a `Pruebas Doing` (Jira-Agent).
+2. Inspección de la aplicación mediante Playwright MCP (Playwright-Agent).
+3. Generación del archivo `.spec.ts` en `tests/generated/`.
+4. Ejecución del flujo técnico con `scripts/run-automation.ts <ISSUE>`.
+5. Publicación del reporte, capturas de evidencia y transición a `Pruebas Done` o retención en `Pruebas Doing` según el resultado.
 
----
-
-# Comandos útiles
-
-Ejecutar una automatización:
+### Opción 2: Ejecución Manual vía CLI
+Para re-ejecutar el flujo técnico sobre una prueba previamente generada:
 
 ```bash
-npx ts-node scripts/run-automation.ts SCRUM-15
-```
+# Ejecutar el flujo de automatización completo y actualizar Jira:
+npx ts-node scripts/run-automation.ts SCRUM-11
 
-Ejecutar una prueba específica:
-
-```bash
-npx playwright test tests/generated/SCRUM-15.spec.ts
-```
-
-Ejecutar todas las pruebas:
-
-```bash
-npx playwright test
-```
-
-Abrir el reporte de Playwright:
-
-```bash
-npx playwright show-report
+# O ejecutar únicamente el test con Playwright:
+npx playwright test tests/generated/SCRUM-11.spec.ts
 ```
 
 ---
 
-# Archivos generados
+## 📋 Reglas y Buenas Prácticas
 
-Las pruebas se almacenan en:
-
-```
-tests/generated/
-```
-
-Las evidencias se almacenan en:
-
-```
-evidence/<ISSUE>/
-```
-
-Los reportes se almacenan en:
-
-```
-reports/<ISSUE>-ENTREGA.md
-```
+- **Playwright MCP Obligatorio**: NUNCA se deben inventar selectores o escribir pruebas a ciegas sin haber inspeccionado la app en vivo con el MCP.
+- **Seguridad**: No incluir credenciales ni tokens en el código ni subirlos al repositorio. Utilizar siempre el archivo `.env`.
+- **Integridad de Jira**: El estado solo transiciona a `Pruebas Done` si **el 100% de las pruebas aprueban**. En caso de fallo, la HU permanece en `Pruebas Doing` y se reportan los errores.
+- **Mantenibilidad**: Las pruebas generadas son atómicas, independientes y escritas en TypeScript siguiendo las mejores prácticas de ISTQB y Playwright.
 
 ---
 
-# Agentes
-
-El proyecto utiliza tres agentes:
-
-- **QA-Orchestrator:** Coordina el flujo completo.
-- **Jira-Agent:** Gestiona la interacción con Jira.
-- **Playwright-Agent:** Inspecciona la aplicación, genera y ejecuta las pruebas.
-
-Las reglas comunes se encuentran en:
-
-```
-.github/instructions/
-```
-
-Las reglas específicas para GitHub Copilot se encuentran en:
-
-```
-.github/copilot-instructions.md
-```
-
----
-
-# Buenas prácticas
-
-- Reutilizar siempre el código existente.
-- No crear scripts temporales.
-- No duplicar funcionalidad.
-- No inventar datos faltantes.
-- Utilizar Playwright MCP antes de generar cualquier prueba.
-- Mantener las pruebas simples y reutilizables.
-
----
-
-# Autor
+## 👤 Autor
 
 Henrry Chariguaman

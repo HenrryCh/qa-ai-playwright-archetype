@@ -44,14 +44,18 @@ Puedes recibir:
 Siempre sigue este orden:
 
 1. Validar la solicitud recibida.
-2. Verificar que exista la información necesaria.
+2. Verificar que exista la información necesaria y validar las variables de entorno ejecutando `scripts/check-env.ts`.
 3. Analizar la estructura del proyecto.
 4. Reutilizar la funcionalidad existente.
-5. Delegar las operaciones de Jira al Jira-Agent.
-6. Delegar la automatización al Playwright-Agent.
-7. Esperar el resultado.
-8. Consolidar el resultado.
-9. Informar el estado final.
+5. Mover la Historia de Usuario a "Pruebas Doing" en Jira (delegando al Jira-Agent).
+6. Generar el código de prueba automatizado `.spec.ts` en `tests/generated/` (delegando al Playwright-Agent). Verificar que el archivo exista en disco antes de continuar.
+7. Ejecutar el flujo de automatización completo ejecutando el script `scripts/run-automation.ts <ISSUE>` **una única vez**. Este script coordinará:
+   - La ejecución de las pruebas mediante Playwright, la generación de evidencias en `evidence/<ISSUE>/` y el informe de entrega en `reports/<ISSUE>-ENTREGA.md` (delegado al Playwright-Agent).
+   - La inspección previa y visible de la aplicación mediante el MCP de Playwright: abrir el navegador, navegar a la app, inspeccionar los elementos reales y validar el flujo con la UI en vivo antes de generar o ejecutar la prueba.
+   - El registro del comentario en Jira con los resultados de la automatización (delegado al Jira-Agent). El comentario debe publicarse una sola vez; si la automatización se vuelve a ejecutar, se debe actualizar ese mismo comentario en lugar de crear uno nuevo.
+   - La actualización del estado de la Historia de Usuario a "Pruebas Done" si es exitoso, o mantener en "Pruebas Doing" si falla (delegado al Jira-Agent).
+8. Consolidar el resultado final.
+9. Informar el estado final al usuario.
 
 ---
 
@@ -90,11 +94,14 @@ Delega al Jira-Agent:
 
 Delega al Playwright-Agent:
 
-- Inspección mediante Playwright MCP.
+- Inspección de la aplicación mediante el servidor MCP `playwright` (herramientas `playwright/browser_*`), incluyendo abrir el navegador, navegar a la aplicación, inspeccionar los elementos reales y validar el flujo de forma visual en vivo.
 - Generación de pruebas.
 - Ejecución de Playwright.
 - Evidencias.
 - Informe de ejecución.
+
+La inspección siempre debe realizarse usando el servidor MCP `playwright`.
+Nunca uses `browser_subagent` como mecanismo de inspección; ese no es el MCP configurado en el proyecto.
 
 ---
 
@@ -110,6 +117,11 @@ Nunca debes:
 - Consumir directamente la API de Jira.
 - Ejecutar Playwright manualmente.
 - Inventar información.
+- Usar `browser_subagent` para inspeccionar la aplicación. El servidor MCP correcto es `playwright`.
+- Ejecutar `scripts/run-automation.ts` antes de que el archivo `.spec.ts` exista en `tests/generated/`.
+- Ejecutar `scripts/run-automation.ts` más de una vez por Historia de Usuario. Una sola ejecución registra el comentario en Jira; ejecutarlo varias veces genera comentarios duplicados.
+- Si el flujo necesita repetirse por corrección, actualiza el comentario de Jira existente en lugar de crear uno nuevo.
+- No considerar la automatización completa si no se realizó una inspección visible con Playwright MCP antes de generar o ejecutar la prueba.
 
 ---
 

@@ -1,9 +1,12 @@
-import { exec } from "child_process";
-import { promisify } from "util";
+import { spawn } from "child_process";
 import { existsSync, readFileSync } from "fs";
 
-const execAsync = promisify(exec);
 const npxCommand = process.platform === "win32" ? "npx.cmd" : "npx";
+
+export interface SpecValidationResult {
+  isValid: boolean;
+  error?: string;
+}
 
 export interface PlaywrightTestResult {
   name: string;
@@ -42,7 +45,43 @@ interface PlaywrightTestExecution {
 export class PlaywrightRunner {
   private readonly resultsPath = "reports/playwright-results.json";
 
+  async validateSpec(specFile: string): Promise<SpecValidationResult> {
+    if (!existsSync(specFile)) {
+      return { isValid: false, error: `No existe el archivo ${specFile}` };
+    }
+
+    const content = readFileSync(specFile, "utf8");
+
+    if (!content.includes("test(")) {
+      return { isValid: false, error: "El spec no contiene tests Playwright válidos." };
+    }
+
+    if (!content.includes("@playwright/test")) {
+      return { isValid: false, error: "El spec no importa '@playwright/test'." };
+    }
+
+    if (content.includes("process.env") && !content.includes("requireEnvironmentVariable")) {
+      return {
+        isValid: false,
+        error: "El spec usa variables de entorno de forma no compatible con el arquetipo. Usa el patrón de configuración existente y evita depender de una app específica.",
+      };
+    }
+
+    if (content.includes("env.reservalab") || content.includes("env.jira") || content.includes("env.baseUrl") && !content.includes("from '../../config/env'")) {
+      return {
+        isValid: false,
+        error: "El spec intenta usar una configuración de entorno no compatible con el arquetipo. Mantén el contrato genérico del proyecto.",
+      };
+    }
+
+    return { isValid: true };
+  }
+
   async run(testFile?: string): Promise<PlaywrightRunResult> {
+    const args = testFile
+      ? ["playwright", "test", testFile]
+      : ["playwright", "test"];
+
     const command = testFile
       ? `${npxCommand} playwright test ${testFile}`
       : `${npxCommand} playwright test`;
@@ -50,9 +89,13 @@ export class PlaywrightRunner {
     console.log(`\nEjecutando: ${command}\n`);
 
     try {
-      const { stdout, stderr } = await execAsync(command);
+      const { stdout, stderr, code } = await this.runCommand(args);
 
       this.printOutput(stdout, stderr);
+
+      if (code !== 0) {
+        console.warn(`Playwright finalizó con código ${code}.`);
+      }
 
       return this.readResults();
     } catch (error: unknown) {
@@ -68,6 +111,33 @@ export class PlaywrightRunner {
 
       return this.readResults();
     }
+  }
+
+  private runCommand(args: string[]): Promise<{ stdout: string; stderr: string; code: number }> {
+    return new Promise((resolve, reject) => {
+      const child = spawn(npxCommand, args, {
+        cwd: process.cwd(),
+        stdio: ["ignore", "pipe", "pipe"],
+        shell: false,
+      });
+
+      let stdout = "";
+      let stderr = "";
+
+      child.stdout?.on("data", (chunk) => {
+        stdout += chunk.toString();
+      });
+
+      child.stderr?.on("data", (chunk) => {
+        stderr += chunk.toString();
+      });
+
+      child.on("error", reject);
+
+      child.on("close", (code) => {
+        resolve({ stdout, stderr, code: code ?? 1 });
+      });
+    });
   }
 
   private printOutput(stdout: string, stderr: string): void {
